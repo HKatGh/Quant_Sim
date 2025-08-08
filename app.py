@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, session
 import random
 import sqlite3
 from collections import defaultdict
+from flask import send_file
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -160,6 +162,14 @@ def roll():
 def logout():
     session.pop('username', None)
     return redirect('/')
+
+
+@app.route('/download-db')
+def download_db():
+    if os.path.exists('quant_sim.db'):
+        return send_file('quant_sim.db', as_attachment=True)
+    return "Database not found", 404
+
 
 init_db()
 if __name__ == '__main__':
