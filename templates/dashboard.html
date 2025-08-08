@@ -1,0 +1,17 @@
+<h2>Welcome, {{ user }}</h2>
+<p>Current Stock Price: ₹{{ price }}</p>
+<p>Cash: ₹{{ data.cash }}</p>
+<p>Shares: {{ data.shares }}</p>
+<p>Portfolio Value: ₹{{ data.portfolio_value }}</p>
+
+<form method="POST" action="/trade">
+  <select name="action">
+    <option value="buy">Buy</option>
+    <option value="sell">Sell</option>
+  </select>
+  <input type="number" name="quantity" min="1" required>
+  <button type="submit">Submit</button>
+</form>
+
+<a href="/leaderboard">View Leaderboard</a> |
+<a href="/logout">Logout</a>

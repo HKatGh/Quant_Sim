@@ -1,0 +1,7 @@
+<h2>Leaderboard</h2>
+<ol>
+  {% for user, data in leaderboard %}
+    <li>{{ user }} - ₹{{ data.portfolio_value }}</li>
+  {% endfor %}
+</ol>
+<a href="/dashboard">Back to Dashboard</a>
