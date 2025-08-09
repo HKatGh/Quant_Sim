@@ -1,17 +1,129 @@
-<h2>Welcome, {{ user }}</h2>
-<p>Current Stock Price: ₹{{ price }}</p>
-<p>Cash: ₹{{ data.cash }}</p>
-<p>Shares: {{ data.shares }}</p>
-<p>Portfolio Value: ₹{{ data.portfolio_value }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantSim Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-<form method="POST" action="/trade">
-  <select name="action">
-    <option value="buy">Buy</option>
-    <option value="sell">Sell</option>
-  </select>
-  <input type="number" name="quantity" min="1" required>
-  <button type="submit">Submit</button>
-</form>
+        h2 {
+            margin-top: 30px;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(0, 255, 200, 0.7);
+        }
 
-<a href="/leaderboard">View Leaderboard</a> |
-<a href="/logout">Logout</a>
+        .stats {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            width: 320px;
+            backdrop-filter: blur(6px);
+        }
+
+        .stats p {
+            margin: 8px 0;
+            font-size: 1.1rem;
+        }
+
+        form {
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 320px;
+        }
+
+        select, input {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        select option {
+            background: #2c5364;
+            color: white;
+        }
+
+        button {
+            padding: 12px;
+            background: linear-gradient(90deg, #00f260, #0575e6);
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 255, 200, 0.5);
+        }
+
+        .links {
+            margin-top: 25px;
+            font-size: 1.1rem;
+        }
+
+        .links a {
+            color: #00f260;
+            text-decoration: none;
+            margin: 0 8px;
+            transition: color 0.3s;
+        }
+
+        .links a:hover {
+            color: #57ffea;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Welcome, {{ user }}</h2>
+
+    <div class="stats">
+        <p>💹 <strong>Current Stock Price:</strong> ₹{{ price }}</p>
+        <p>💰 <strong>Cash:</strong> ₹{{ data.cash }}</p>
+        <p>📈 <strong>Shares:</strong> {{ data.shares }}</p>
+        <p>📊 <strong>Portfolio Value:</strong> ₹{{ data.portfolio_value }}</p>
+    </div>
+
+    <form method="POST" action="/trade">
+        <select name="action">
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+        </select>
+        <input type="number" name="quantity" min="1" required placeholder="Quantity">
+        <button type="submit">Submit</button>
+    </form>
+
+    <div class="links">
+        <a href="/leaderboard">🏆 View Leaderboard</a> |
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+</body>
+</html>

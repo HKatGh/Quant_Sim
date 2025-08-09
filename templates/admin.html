@@ -1,4 +1,60 @@
-<h2>Admin Panel</h2>
-<p>Current Price: ₹{{ price }}</p>
-<a href="/admin/roll">Roll Dice to Update Price</a><br>
-<a href="/leaderboard">Leaderboard</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 25px;
+      text-shadow: 0 0 10px rgba(0, 255, 200, 0.7);
+    }
+    p {
+      font-size: 1.4rem;
+      margin-bottom: 40px;
+      text-shadow: 0 0 6px rgba(0, 255, 200, 0.5);
+    }
+    a {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      color: white;
+      background: linear-gradient(90deg, #00f260, #0575e6);
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 255, 200, 0.6);
+      transition: background 0.3s ease, transform 0.2s ease;
+      width: 260px;
+      text-align: center;
+    }
+    a:hover {
+      background: linear-gradient(90deg, #0575e6, #00f260);
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 255, 200, 0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Admin Panel</h2>
+  <p>Current Price: ₹{{ price }}</p>
+
+  <a href="/admin/roll">🎲 Roll Dice to Update Price</a>
+  <a href="/leaderboard">🏆 Leaderboard</a>
+
+</body>
+</html>
