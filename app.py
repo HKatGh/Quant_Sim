@@ -83,10 +83,11 @@ def get_leaderboard():
     c.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = c.fetchall()
     table_name=tables[0][0]
-    c.execute(f"SELECT * FROM {table_name} LIMIT 5;")
+    c.execute(f"SELECT * FROM {table_name};")
     rows=c.fetchall()
+    row_sorted=sorted(rows,key=lambda x: x[3], reverse=True)
     conn.close()
-    return [{"NAME": row[0],"CASH": row[1],"SHARE": row[2], "PORTFOLIO VALUE": row[3]} for row in rows]
+    return [{"NAME": row[0],"PORTFOLIO VALUE": row[3]} for row in row_sorted]
 
 
 @app.route('/')
