@@ -81,7 +81,7 @@ def get_leaderboard():
     conn = sqlite3.connect('quant_sim.db')
     c = conn.cursor()
     c.execute("SELECT username, portfolio_value FROM users ORDER BY portfolio_value DESC")
-    ranked = c.fetchall()
+    rows = c.fetchall()
     conn.close()
     return [{"username": row[0], "portfolio_value": row[1]} for row in rows]
 
