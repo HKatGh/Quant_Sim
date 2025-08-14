@@ -66,8 +66,11 @@
 
     <h2>Leaderboard</h2>
     <ol>
-      {% for user, data in leaderboard %}
-        <li>{{ user }} <span>₹{{ data.portfolio_value }}</span></li>
+      {% for user in leaderboard %}
+        <li>
+            {{ user["NAME"] }}
+            <span>₹{{ "%.2f"|format(user["PORTFOLIO VALUE"]) }}</span>
+        </li>
       {% endfor %}
     </ol>
     <a href="/dashboard">⬅ Back to Dashboard</a>
