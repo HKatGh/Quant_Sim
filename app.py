@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import random
-import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictConnection
 from collections import defaultdict
 from flask import send_file
 import os
@@ -8,26 +9,49 @@ import os
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT", 5432)
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+def get_conn():
+    return psycopg2.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
+    )
+
+
+
 # Initialize SQLite DB
+
 def init_db():
-    conn = sqlite3.connect('quant_sim.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS users (
-                    username TEXT PRIMARY KEY,
-                    cash REAL,
-                    shares INTEGER,
-                    portfolio_value REAL
-                )''')
-    c.execute('''CREATE TABLE IF NOT EXISTS settings (
-                    key TEXT PRIMARY KEY,
-                    value REAL
-                )''')
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            cash NUMERIC,
+            shares INTEGER,
+            portfolio_value NUMERIC
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value NUMERIC
+        )
+    ''')
     conn.commit()
+    cur.close()
     conn.close()
 
 
 def get_price():
-    conn = sqlite3.connect('quant_sim.db')
+    conn = get_conn()
     c = conn.cursor()
     c.execute("SELECT value FROM settings WHERE key='current_price'")
     result = c.fetchone()
@@ -35,59 +59,61 @@ def get_price():
         price = result[0]
     else:
         price = 100
-        c.execute("INSERT INTO settings (key, value) VALUES (?, ?)", ('current_price', price))
+        c.execute("INSERT INTO settings (key, value) VALUES (%s, %s)", ('current_price', price))
         conn.commit()
+    c.close()
     conn.close()
     return price
 
 
 def set_price(price):
-    conn = sqlite3.connect('quant_sim.db')
+    conn = get_conn()
     c = conn.cursor()
-    c.execute("UPDATE settings SET value=? WHERE key='current_price'", (price,))
+    c.execute("UPDATE settings SET value=%s WHERE key='current_price'", (price,))
     conn.commit()
+    c.close()
     conn.close()
 
 
 def get_user(username):
-    conn = sqlite3.connect('quant_sim.db')
+    conn = get_conn()
     c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE username=?", (username,))
+    c.execute("SELECT * FROM users WHERE username=%s", (username,))
     user = c.fetchone()
+    c.close()
     conn.close()
     return user
 
 
 def create_user(username):
-    conn = sqlite3.connect('quant_sim.db')
+    conn = get_conn()
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, cash, shares, portfolio_value) VALUES (?, ?, ?, ?)",
+    c.execute("INSERT INTO users (username, cash, shares, portfolio_value) VALUES (%s, %s, %s, %s)",
               (username, 10000, 0, 10000))
     conn.commit()
+    c.close()
     conn.close()
 
 
 def update_user(username, cash, shares):
     portfolio_value = cash + shares * get_price()
-    conn = sqlite3.connect('quant_sim.db')
+    conn = get_conn()
     c = conn.cursor()
-    c.execute("UPDATE users SET cash=?, shares=?, portfolio_value=? WHERE username=?",
+    c.execute("UPDATE users SET cash=%s, shares=%s, portfolio_value=%s WHERE username=%s",
               (cash, shares, portfolio_value, username))
     conn.commit()
+    c.close()
     conn.close()
 
 
 def get_leaderboard():
-    conn = sqlite3.connect('quant_sim.db')
+    conn = get_conn()
     c = conn.cursor()
-    c.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = c.fetchall()
-    table_name=tables[0][0]
-    c.execute(f"SELECT * FROM {table_name};")
+    c.execute("SELECT username, portfolio_value FROM users ORDER BY portfolio_value DESC;")
     rows=c.fetchall()
-    row_sorted=sorted(rows,key=lambda x: x[3], reverse=True)
+    c.close()
     conn.close()
-    return [{"NAME": row[0],"PORTFOLIO VALUE": row[3]} for row in row_sorted]
+    return [{"NAME": row[0],"PORTFOLIO VALUE": row[1]} for row in rows]
 
 
 @app.route('/')
@@ -168,11 +194,7 @@ def logout():
     return redirect('/')
 
 
-@app.route('/download-db')
-def download_db():
-    if os.path.exists('quant_sim.db'):
-        return send_file('quant_sim.db', as_attachment=True)
-    return "Database not found", 404
+
 
 
 init_db()
