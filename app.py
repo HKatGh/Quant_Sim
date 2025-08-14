@@ -83,7 +83,7 @@ def get_leaderboard():
     c.execute("SELECT username, portfolio_value FROM users ORDER BY portfolio_value DESC")
     ranked = c.fetchall()
     conn.close()
-    return ranked
+    return [{"username": row[0], "portfolio_value": row[1]} for row in rows]
 
 
 @app.route('/')
