@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, session
 import random
-import psycopg2
-from psycopg2.extras import RealDictConnection
+from psycopg import connect
+from psycopg.rows import dict_row
+
 from collections import defaultdict
 from flask import send_file
 import os
@@ -15,14 +16,17 @@ DB_PORT = os.getenv("DB_PORT", 5432)
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
+
 def get_conn():
-    return psycopg2.connect(
+    return connect(
         host=DB_HOST,
         port=DB_PORT,
-        database=DB_NAME,
+        dbname=DB_NAME,       # not 'database'
         user=DB_USER,
-        password=DB_PASSWORD
+        password=DB_PASSWORD,
+        row_factory=dict_row   # for dict-like query results
     )
+
 
 
 
