@@ -80,10 +80,13 @@ def update_user(username, cash, shares):
 def get_leaderboard():
     conn = sqlite3.connect('quant_sim.db')
     c = conn.cursor()
-    c.execute("SELECT username, portfolio_value FROM users ORDER BY portfolio_value DESC")
-    rows = c.fetchall()
+    c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = c.fetchall()
+    table_name=tables[0][0]
+    c.execute(f"SELECT * FROM {table_name} LIMIT 5;")
+    rows=c.fetchall()
     conn.close()
-    return [{"username": row[0], "portfolio_value": row[1]} for row in rows]
+    return [{"NAME": row[0],"CASH": row[1],"SHARE": row[2], "PORTFOLIO VALUE": row[3]} for row in rows]
 
 
 @app.route('/')
